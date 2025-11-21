@@ -9,8 +9,20 @@ BALL_SPEED = 5
 PADDLE_SPEED = 10
 COUNTDOWN_START = 3
 
+PADDLE_W = 60
+PADDLE_H = 300
+BALL_RADIUS = 60
+PADDLE_X_OFFSET = 20
+TOP_UI_HEIGHT = 60
+
+P1_DRAW_X = PADDLE_X_OFFSET
+P2_DRAW_X = WIDTH - PADDLE_X_OFFSET - PADDLE_W
+
+P1_COLLISION_X = P1_DRAW_X + PADDLE_W
+P2_COLLISION_X = P2_DRAW_X
+
 class GameServer:
-    def __init__(self, host='localhost', port=8080):
+    def __init__(self, host='', port=5052):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((host, port))
         self.server.listen(2)
@@ -42,14 +54,14 @@ class GameServer:
                 data = conn.recv(64).decode()
                 with self.lock:
                     if data == "UP":
-                        self.paddles[pid] = max(60, self.paddles[pid] - PADDLE_SPEED)
+                        self.paddles[pid] = max(TOP_UI_HEIGHT, self.paddles[pid] - PADDLE_SPEED)
                     elif data == "DOWN":
-                        self.paddles[pid] = min(HEIGHT - 100, self.paddles[pid] + PADDLE_SPEED)
+                        self.paddles[pid] = min(HEIGHT - PADDLE_H, self.paddles[pid] + PADDLE_SPEED)
         except:
             with self.lock:
                 self.connected[pid] = False
                 self.game_over = True
-                self.winner = 1 - pid  # інший гравець автоматично виграє
+                self.winner = 1 - pid 
                 print(f"Гравець {pid} відключився. Переміг гравець {1 - pid}.")
 
     def broadcast_state(self):
@@ -80,12 +92,12 @@ class GameServer:
                 self.ball['x'] += self.ball['vx']
                 self.ball['y'] += self.ball['vy']
 
-                if self.ball['y'] <= 60 or self.ball['y'] >= HEIGHT:
+                if self.ball['y'] <= TOP_UI_HEIGHT or self.ball['y'] >= HEIGHT - BALL_RADIUS:
                     self.ball['vy'] *= -1
                     self.sound_event = "wall_hit"
 
-                if (self.ball['x'] <= 40 and self.paddles[0] <= self.ball['y'] <= self.paddles[0] + 100) or \
-                   (self.ball['x'] >= WIDTH - 40 and self.paddles[1] <= self.ball['y'] <= self.paddles[1] + 100):
+                if (self.ball['x'] <= P1_COLLISION_X and self.paddles[0] <= self.ball['y'] <= self.paddles[0] + PADDLE_H) or \
+                   (self.ball['x'] >= P2_COLLISION_X and self.paddles[1] <= self.ball['y'] <= self.paddles[1] + PADDLE_H):
                     self.ball['vx'] *= -1
                     self.sound_event = 'platform_hit'
 
@@ -137,7 +149,6 @@ class GameServer:
             print(f"Гравець {self.winner} переміг!")
             time.sleep(5)
 
-            # Закриваємо старі з'єднання
             for pid in [0, 1]:
                 try:
                     self.clients[pid].close()

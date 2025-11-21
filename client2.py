@@ -7,10 +7,9 @@ import os
 # ---ПУГАМЕ НАЛАШТУВАННЯ ---
 WIDTH, HEIGHT = 800, 600
 init()
-mixer.init()
 screen = display.set_mode((WIDTH, HEIGHT))
 clock = time.Clock()
-display.set_caption("Пінг-Пong")
+display.set_caption("Пінг-Понг")
 
 # --- РОЗМІРИ ОБ'ЄКТІВ ---
 PADDLE_W = 60
@@ -27,7 +26,7 @@ def connect_to_server():
     while True:
         try:
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client.connect(('localhost', 5052)) 
+            client.connect(('192.168.0.152', 5052)) 
             buffer = ""
             game_state = {}
             my_id = int(client.recv(24).decode())
@@ -76,13 +75,7 @@ except FileNotFoundError as e:
     use_images = False 
 
 # --- ЗВУКИ ---
-mixer.music.load(os.path.join("sounds", "background_music.ogg"))
-wall_hit_sound = mixer.Sound(os.path.join("sounds", "wall_hit.wav"))
-platform_hit_sound = mixer.Sound(os.path.join("sounds", "platform_hit.wav"))
-win_sound = mixer.Sound(os.path.join("sounds", "win.wav"))
-lose_sound = mixer.Sound(os.path.join("sounds", "lose.wav"))
 
-mixer.music.set_volume(0.3)
 
 # --- ГРА ---
 game_over = False
@@ -90,8 +83,6 @@ winner = None
 you_winner = None
 my_id, game_state, buffer, client = connect_to_server()
 Thread(target=receive, daemon=True).start()
-
-mixer.music.play(-1) 
 
 while True:
     for e in event.get():
@@ -109,14 +100,10 @@ while True:
         screen.fill((20, 20, 20))
 
         if you_winner is None: 
-            mixer.music.stop() 
-            
             if game_state["winner"] == my_id:
                 you_winner = True
-                win_sound.play() 
             else:
                 you_winner = False
-                lose_sound.play() 
 
         if you_winner:
             text = "Ти переміг!"
@@ -155,11 +142,9 @@ while True:
 
         if game_state['sound_event']:
             if game_state['sound_event'] == 'wall_hit':
-                wall_hit_sound.play() 
+                pass
             if game_state['sound_event'] == 'platform_hit':
-                platform_hit_sound.play() 
-            
-            game_state['sound_event'] = None 
+                pass
 
     else:
         if use_images:
