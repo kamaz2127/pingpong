@@ -13,9 +13,9 @@ clock = time.Clock()
 display.set_caption("Пінг-Пong")
 
 # --- РОЗМІРИ ОБ'ЄКТІВ ---
-PADDLE_W = 60
+PADDLE_W = 130
 PADDLE_H = 300
-BALL_RADIUS = 30
+BALL_RADIUS = 50
 BALL_DIAMETER = BALL_RADIUS * 2
 PADDLE_X_OFFSET = 20
 
@@ -58,16 +58,16 @@ IMAGE_PATH = "images"
 use_images = True 
 
 try:
-    background_img = image.load(os.path.join(IMAGE_PATH, "background.jpg")).convert()
+    background_img = image.load(os.path.join(IMAGE_PATH, "riatsun_background.jpg")).convert()
     background_img = transform.scale(background_img, (WIDTH, HEIGHT))
     
-    paddle1_img = image.load(os.path.join(IMAGE_PATH, "paddle1.png")).convert_alpha()
+    paddle1_img = image.load(os.path.join(IMAGE_PATH, "riatsun_paddle1.png")).convert_alpha()
     paddle1_img = transform.scale(paddle1_img, (PADDLE_W, PADDLE_H)) 
     
-    paddle2_img = image.load(os.path.join(IMAGE_PATH, "paddle2.png")).convert_alpha()
+    paddle2_img = image.load(os.path.join(IMAGE_PATH, "riatsun_paddle2.png")).convert_alpha()
     paddle2_img = transform.scale(paddle2_img, (PADDLE_W, PADDLE_H)) 
     
-    ball_img = image.load(os.path.join(IMAGE_PATH, "ball.png")).convert_alpha()
+    ball_img = image.load(os.path.join(IMAGE_PATH, "riatsun_ball.png")).convert_alpha()
     ball_img = transform.scale(ball_img, (BALL_DIAMETER, BALL_DIAMETER)) 
 
 except FileNotFoundError as e:
@@ -76,11 +76,11 @@ except FileNotFoundError as e:
     use_images = False 
 
 # --- ЗВУКИ ---
-mixer.music.load(os.path.join("sounds", "background_music.ogg"))
-wall_hit_sound = mixer.Sound(os.path.join("sounds", "wall_hit.wav"))
-platform_hit_sound = mixer.Sound(os.path.join("sounds", "platform_hit.wav"))
-win_sound = mixer.Sound(os.path.join("sounds", "win.wav"))
-lose_sound = mixer.Sound(os.path.join("sounds", "lose.wav"))
+mixer.music.load(os.path.join("sounds", "riatsun_music.ogg"))
+wall_hit_sound = mixer.Sound(os.path.join("sounds", "riatsun_hit.wav"))
+platform_hit_sound = mixer.Sound(os.path.join("sounds", "riatsun_wallhit.wav"))
+win_sound = mixer.Sound(os.path.join("sounds", "riatsun_win.wav"))
+lose_sound = mixer.Sound(os.path.join("sounds", "riatsun_lose.wav"))
 
 mixer.music.set_volume(0.3)
 
